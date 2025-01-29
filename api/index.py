@@ -1,23 +1,35 @@
-# from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify
 import json
 
-# app = Flask(__name__)
+app = Flask(__name__)
 
-# Example data: a dictionary mapping names to marks
-with open('api/std_marks.json') as f:
-    marks_data = json.load(f)
+# Example data: a list of dictionaries with names and marks
+try:
+    with open('api/std_marks.json') as f:
+        marks_data = json.load(f)
+except FileNotFoundError:
+    marks_data = []
 
-# @app.route('/api', methods=['GET'])
-# def get_marks():
-#     # Retrieve the list of names from query parameters
-#     names = request.args.getlist('name')
+@app.route('/api', methods=['GET'])
+def get_marks():
+    # Retrieve the list of names from query parameters
+    names = request.args.getlist('name')
     
-#     # Retrieve the corresponding marks from the marks_data dictionary
-#     marks = [marks_data.get(name.lower(), None) for name in names]
-    
-#     # Return the marks in a JSON response
-#     return jsonify({'marks': marks})
+    if not names:
+        return jsonify({'error': 'No name parameters provided'}), 400
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
-print(marks_data)
+    # Retrieve the corresponding marks from the marks_data list
+    marks = []
+    for name in names:
+        # Search the list for the matching name
+        mark_entry = next((entry for entry in marks_data if entry['name'].lower() == name.lower()), None)
+        if mark_entry is None:
+            marks.append(None)  # If the name is not found, append None or a default value
+        else:
+            marks.append(mark_entry['marks'])
+    
+    # Return only the marks in a JSON response in the format you requested
+    return jsonify({'marks': marks})
+
+if __name__ == '__main__':
+    app.run(debug=True)
