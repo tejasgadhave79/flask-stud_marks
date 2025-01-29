@@ -1,7 +1,11 @@
 from flask import Flask, request, jsonify
 import json
+from flask_cors import CORS  # Import CORS
 
 app = Flask(__name__)
+
+# Enable CORS for all routes in the app
+CORS(app)
 
 # Example data: a list of dictionaries with names and marks
 try:
