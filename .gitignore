@@ -1,6 +1,7 @@
 .vercel
 *.log
 *.pyc
+fastapi
 __pycache__
 
 # Environments 

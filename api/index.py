@@ -14,11 +14,12 @@ try:
 except FileNotFoundError:
     marks_data = []
 
+
 @app.route('/api', methods=['GET'])
 def get_marks():
     # Retrieve the list of names from query parameters
     names = request.args.getlist('name')
-    
+
     if not names:
         return jsonify({'error': 'No name parameters provided'}), 400
 
@@ -26,14 +27,16 @@ def get_marks():
     marks = []
     for name in names:
         # Search the list for the matching name
-        mark_entry = next((entry for entry in marks_data if entry['name'].lower() == name.lower()), None)
+        mark_entry = next((entry for entry in marks_data
+                           if entry['name'].lower() == name.lower()), None)
         if mark_entry is None:
-            marks.append(None)  # If the name is not found, append None or a default value
+            marks.append(None)  # If the name is not found, append None
         else:
             marks.append(mark_entry['marks'])
-    
+
     # Return only the marks in a JSON response in the format you requested
     return jsonify({'marks': marks})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
